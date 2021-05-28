@@ -1,35 +1,17 @@
-import { v4 as uuid } from 'uuid';
+import express from 'express';
 
-let projects = [];
+import {
+  getProjects, createProject, getProject, deleteProject,
+} from '../services/projects.js';
 
-export const getProjects = (req, res) => {
-    console.log(`Projects in the database: ${projects.name}`);
+const router = express.Router();
 
-    res.send(projects);
-}
+router.get('/', getProjects);
 
-export const createProject = (req, res) => {   
-    const project = req.body;
+router.post('/', createProject);
 
-    projects.push({id: uuid(),...project});
-    
-    console.log(`Project [${project.name}] added to the database.`);
+router.get('/:id', getProject);
 
-    res.send("Project added successfully");
-};
+router.delete('/:id', deleteProject);
 
-export const getProject = (req, res) => {
-    var id= req.params.id;
-
-    var project=projects.find((user)=>user.id===id);
-    res.send(project);
-
-};
-
-export const deleteProject = (req, res) => { 
-    console.log(`Project with id ${req.params.id} has been deleted`);
-    
-    projects = projects.filter((user) => user.id !== req.params.id);
-
-    res.send("Project deleted successfully");
-};
+export default router;

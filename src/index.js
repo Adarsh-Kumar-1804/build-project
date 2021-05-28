@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-import projectRoutes from "./routes/projects.js";
+import projectRoutes from "./controllers/projects.js";
 
 const app = express();
 
