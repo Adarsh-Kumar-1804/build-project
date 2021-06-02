@@ -42,9 +42,10 @@ export const getProject = (req, res) => {
 
   if (!project) {
     res.send('The project does not exist');
+    return;
   }
 
-  myCache.set(req.customurl, project);
+  // myCache.set(req.customurl, project);
   res.send(project);
 };
 
@@ -59,5 +60,6 @@ export const deleteProject = (req, res) => {
     }
   });
 
+  myCache.del(id);
   res.send(`Project with id ${id} has been deleted`);
 };
