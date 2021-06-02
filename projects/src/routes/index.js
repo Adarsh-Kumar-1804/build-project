@@ -1,16 +1,14 @@
 import express from 'express';
 
-import {
-  getProjects, createProject, getProject, deleteProject,
-} from '../services/projectservice.js';
+import { getProjects, createProject, getProject, deleteProject,getFromCache} from '../services/projectservice.js';
 
 const router = express.Router();
 
-router.get('/', getProjects);
+router.get('/',getFromCache,getProjects);
 
 router.post('/', createProject);
 
-router.get('/:id', getProject);
+router.get('/:id',getFromCache,getProject);
 
 router.delete('/:id', deleteProject);
 

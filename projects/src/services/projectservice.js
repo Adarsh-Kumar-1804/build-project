@@ -1,13 +1,29 @@
-import pkg from 'uuid';
-const { v4: uuid } = pkg;
+import { v4 as uuid } from 'uuid';
 import { createRequire } from "module"; 
 const require = createRequire(import.meta.url);
-const data = require("../data/data.json"); 
+const data = require("../data/data.json");
+import nodeCache from "node-cache";
 
-let projects = data;
+const myCache=new nodeCache({stdTTL:10});
+ 
+let projects=data;
+
+export const getFromCache=(req,res,next)=>{
+      
+    var key="projects"+req.route.path;
+      req.customurl=key;
+
+      if(myCache.has(key))
+      {  console.log(`Retrieving data from Cache key: ${key}`);
+          return res.send(myCache.get(key));
+      }
+      else
+      next();
+    }  
 
 export const getProjects = (req, res) => {
     
+    myCache.set(req.customurl,projects);
     res.send(projects);
 }
 
@@ -30,7 +46,8 @@ export const getProject = (req, res) => {
     {
         res.send("The project does not exist");
     }
-
+    
+    myCache.set(req.customurl,project);
     res.send(project);
 
 };
