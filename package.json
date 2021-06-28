@@ -1,0 +1,12 @@
+{
+  "name": "root",
+  "private": true,
+  "version":"1.0.0",
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "scripts":{
+    "kill-ports": "kill-port 3000 8000 4000",
+    "start":"lerna run start"
+  }
+}
