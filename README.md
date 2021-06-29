@@ -25,9 +25,9 @@ git clone https://github.com/Adarsh-Kumar-1804/build-project
 cd projects
 npm install
 ```
-- Build and run the project
+- Run the project
 ```
-npm run all
+npm run start
 ```
 
 
