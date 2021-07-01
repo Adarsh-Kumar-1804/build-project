@@ -4,6 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import { Typography, Button } from '@material-ui/core';
+import { Line } from 'react-chartjs-2';
 
 const useStyles = makeStyles({
   root: {
@@ -21,6 +22,8 @@ export default function OutlineCard({ id }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const toggle = () => setIsOpen(!isOpen);
 
   let results = {};
 
@@ -81,22 +84,57 @@ export default function OutlineCard({ id }) {
     else return <Typography>{y}%</Typography>;
   }
 
+  let durArray = [];
+
+  for (let i = 0; i < data.length; i++) {
+    durArray[i] = data[i].duration;
+  }
+
+  let idArray = [];
+
+  let count = 0;
+  for (let i = 0; i < data.length; i++) {
+    idArray[i] = count++;
+  }
+
+  const datas = {
+    labels: idArray,
+    datasets: [
+      {
+        label: '# of builds',
+        data: durArray,
+        fill: false,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
+
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography variant="h5" className={classes.pos}>
-          {results[`${id}`].avg} {printAvg(prevAvg)}
+          Av.time:{results[`${id}`].avg} s {printAvg(prevAvg)}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button
-          variant="outlined"
-          color="secondary"
-          href="http://localhost:8000/builds"
-        >
-          Learn More
+        <Button variant="outlined" color="secondary" onClick={toggle}>
+          {!isOpen ? 'Learn more' : 'Close'}
         </Button>
       </CardActions>
+      {isOpen ? <Line data={datas} options={options} /> : null}
     </Card>
   );
 }

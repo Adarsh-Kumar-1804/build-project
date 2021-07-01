@@ -15,7 +15,11 @@
       {
         "id":4,
         "name":"Pipeline 4"
-     }
+     },
+     {
+      "id":5,
+      "name":"Pipeline 5"
+   }
    ],
    "builds":[  
         {  
@@ -65,7 +69,25 @@
            "result":"SUCCESS",
            "duration":500,
            "pipelineId":4
-        }
+        },
+        {
+         "id":9,
+         "result":"SUCCESS",
+         "duration":600,
+         "pipelineId":5
+      },
+      {
+         "id":10,
+         "result":"SUCCESS",
+         "duration":700,
+         "pipelineId":5
+      },
+      {
+         "id":10,
+         "result":"SUCCESS",
+         "duration":800,
+         "pipelineId":2
+      }
    ]
 }
 
