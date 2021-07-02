@@ -22,7 +22,6 @@ git clone https://github.com/Adarsh-Kumar-1804/build-project
 ```
 - Install dependencies
 ```
-cd projects
 npm install
 ```
 - Run the project
