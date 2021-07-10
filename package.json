@@ -7,6 +7,6 @@
   },
   "scripts":{
     "kill-ports": "kill-port 3000 8000 4000",
-    "start":"lerna run start"
+    "start":"lerna run start "
   }
 }

@@ -9,7 +9,7 @@ const App = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api`)
+    fetch(`/api/pipelines`)
       .then((res) => {
         if (res.ok) return res.json();
         throw res;
@@ -22,6 +22,7 @@ const App = () => {
         setError(false);
       })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return 'loading...';

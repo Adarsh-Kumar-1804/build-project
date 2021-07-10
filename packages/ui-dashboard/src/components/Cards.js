@@ -20,15 +20,25 @@ const useStyles = makeStyles({
 export default function OutlineCard({ id }) {
   const classes = useStyles();
   const [data, setData] = useState([]);
+  const [resultAvg, setResultAvg] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
 
-  let results = {};
-
+  // API call from results object
   useEffect(() => {
-    fetch(`http://localhost:4000/api/${id}/builds`)
+    fetch(`/api/pipelines/${id}/builds`)
+      .then((res) => res.json())
+      .then((resultAvg) => {
+        setResultAvg(resultAvg[0].avg);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // API call from data array
+  useEffect(() => {
+    fetch(`/api/pipelines/builds/${id}`)
       .then((res) => {
         if (res.ok) return res.json();
 
@@ -42,27 +52,12 @@ export default function OutlineCard({ id }) {
         setError(err);
       })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return 'loading...';
 
   if (error) return 'Error!!';
-
-  data.forEach((element) => {
-    results[element.pipelineId] = {
-      total:
-        ((results[element.pipelineId] && results[element.pipelineId].total) ||
-          0) + element.duration,
-      count:
-        ((results[element.pipelineId] && results[element.pipelineId].count) ||
-          0) + 1,
-      avg:
-        (results[element.pipelineId] &&
-          (results[element.pipelineId].total + element.duration) /
-            (results[element.pipelineId].count + 1)) ||
-        element.duration,
-    };
-  });
 
   let compareRes = 0;
   let n = data.length;
@@ -74,7 +69,7 @@ export default function OutlineCard({ id }) {
   let prevAvg = compareRes / (n - 1);
 
   function printAvg(x) {
-    let y = (((results[`${id}`].avg - x) / x) * 100).toFixed(2);
+    let y = (((resultAvg - x) / x) * 100).toFixed(2);
 
     if (y > 70) {
       return <Typography color="secondary">+ {y}%</Typography>;
@@ -89,6 +84,8 @@ export default function OutlineCard({ id }) {
   for (let i = 0; i < data.length; i++) {
     durArray[i] = data[i].duration;
   }
+
+  console.log(durArray);
 
   let idArray = [];
 
@@ -126,12 +123,15 @@ export default function OutlineCard({ id }) {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography variant="h5" className={classes.pos}>
-          Av.time:{results[`${id}`].avg} s {printAvg(prevAvg)}
+          Av.time: {resultAvg} s
+        </Typography>
+        <Typography variant="h5" className={classes.pos}>
+          {printAvg(prevAvg)}
         </Typography>
       </CardContent>
       <CardActions>
         <Button variant="outlined" color="secondary" onClick={toggle}>
-          {!isOpen ? 'Learn more' : 'Close'}
+          {!isOpen ? 'Details' : 'Close'}
         </Button>
       </CardActions>
       {isOpen ? <Line data={datas} options={options} /> : null}
