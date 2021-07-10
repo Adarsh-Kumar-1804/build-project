@@ -85,8 +85,6 @@ export default function OutlineCard({ id }) {
     durArray[i] = data[i].duration;
   }
 
-  console.log(durArray);
-
   let idArray = [];
 
   let count = 0;
