@@ -1,4 +1,0 @@
-{   
-    "/pipelines/:id/builds/:bid":"/builds?id=:bid&&pipelineId:id",
-    "/builds/:id":"/"
-}

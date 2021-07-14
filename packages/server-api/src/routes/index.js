@@ -1,21 +1,27 @@
 import express from 'express';
 
 import {
-  getProjects,
-  createProject,
-  getProject,
-  deleteProject,
+  getBuilds,
+  getBuildfromId,
+  getPipelines,
+  getPipelineFromId,
+  getResultsFromId,
+  getAllBuildsOfPipeline,
   getFromCache,
 } from '../services/projectservice.js';
 
 const router = express.Router();
 
-router.get('/', getFromCache, getProjects);
+router.get('/builds', getBuilds);
 
-router.post('/', createProject);
+router.get('/builds/:id', getBuildfromId);
 
-router.get('/:id', getFromCache, getProject);
+router.get('/pipelines', getPipelines);
 
-router.delete('/:id', deleteProject);
+router.get('/pipelines/:id', getPipelineFromId);
+
+router.get('/pipelines/:id/builds', getResultsFromId);
+
+router.get('/pipelines/builds/:id', getAllBuildsOfPipeline);
 
 export default router;

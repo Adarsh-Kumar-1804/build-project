@@ -1,17 +1,11 @@
-import { v4 as uuid } from 'uuid';
-import { createRequire } from 'module';
+import { builds, pipelines } from '../data/data.js';
+import fetch from 'node-fetch';
 import NodeCache from 'node-cache';
-
-const require = createRequire(import.meta.url);
-const data = require('../data/data.json');
 
 const myCache = new NodeCache({ stdTTL: 10 });
 
-const projects = data;
-
 export const getFromCache = (req, res, next) => {
-  const key = `projects${req.route.path}`;
-  req.customurl = key;
+  const key = `data${req.route.path}`;
 
   if (myCache.has(key)) {
     console.log(`Retrieving data from Cache key: ${key}`);
@@ -20,46 +14,82 @@ export const getFromCache = (req, res, next) => {
   next();
 };
 
-export const getProjects = (req, res) => {
-  myCache.set(req.customurl, projects);
-  res.send(projects);
+export const getBuilds = (req, res) => {
+  const key = `data${req.route.path}`;
+  myCache.set(key, builds);
+  res.send(builds);
 };
 
-export const createProject = (req, res) => {
-  const project = req.body;
+export const getBuildfromId = (req, res) => {
+  const { id } = req.params;
+  const key = `data${req.route.path}`;
 
-  projects.push({ id: uuid(), ...project });
+  const selectBuilt = builds.filter((build) => build.id === parseInt(id, 10));
+  myCache.set(key, selectBuilt[0]);
 
-  console.log(`Project [${project.name}] added to the database.`);
-
-  res.send('Project added successfully');
+  res.send(selectBuilt[0]);
 };
 
-export const getProject = (req, res) => {
+export const getPipelines = (req, res) => {
+  const key = `data${req.route.path}`;
+  myCache.set(key, pipelines);
+  res.send(pipelines);
+};
+
+export const getPipelineFromId = (req, res) => {
+  const key = `data${req.route.path}`;
   const { id } = req.params;
 
-  const project = projects.find((user) => user.id === id);
+  const selectedPipeline = pipelines.filter(
+    (pipeline) => pipeline.id === parseInt(id, 10)
+  );
 
-  if (!project) {
-    res.send('The project does not exist');
-    return;
-  }
-
-  // myCache.set(req.customurl, project);
-  res.send(project);
+  myCache.set(key, selectedPipeline[0]);
+  res.send(selectedPipeline[0]);
 };
 
-export const deleteProject = (req, res) => {
+export const getResultsFromId = async (req, res) => {
+  const key = `data${req.route.path}`;
+  let results = {};
+  let array = [];
   const { id } = req.params;
+  const builds = await (
+    await fetch(`${req.protocol}://${req.get('host')}/api/builds`)
+  ).json();
+  const selected = builds.filter(
+    (build) => build.pipelineId === parseInt(id, 10)
+  );
 
-  console.log(`Project with id ${id} has been deleted`);
-
-  projects.forEach((user, index) => {
-    if (req.params.id === user.id) {
-      projects.splice(index, 1);
-    }
+  selected.forEach((element) => {
+    results[element.pipelineId] = {
+      total:
+        ((results[element.pipelineId] && results[element.pipelineId].total) ||
+          0) + element.duration,
+      count:
+        ((results[element.pipelineId] && results[element.pipelineId].count) ||
+          0) + 1,
+      avg:
+        (results[element.pipelineId] &&
+          (results[element.pipelineId].total + element.duration) /
+            (results[element.pipelineId].count + 1)) ||
+        element.duration,
+    };
   });
 
-  myCache.del(id);
-  res.send(`Project with id ${id} has been deleted`);
+  array.push(results[`${id}`]);
+  myCache.set(key, array);
+  res.send(array);
+};
+
+export const getAllBuildsOfPipeline = async (req, res) => {
+  const key = `data${req.route.path}`;
+  const { id } = req.params;
+  const builds = await (
+    await fetch(`${req.protocol}://${req.get('host')}/api/builds`)
+  ).json();
+  const selected = builds.filter(
+    (build) => build.pipelineId === parseInt(id, 10)
+  );
+  myCache.set(key, selected);
+  res.send(selected);
 };
