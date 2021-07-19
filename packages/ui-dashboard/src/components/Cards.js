@@ -121,7 +121,7 @@ export default function OutlineCard({ id }) {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography variant="h5" className={classes.pos}>
-          Av.time: {resultAvg} s
+          Av.time: {resultAvg.toFixed(2)} mins
         </Typography>
         <Typography variant="h5" className={classes.pos}>
           {printAvg(prevAvg)}

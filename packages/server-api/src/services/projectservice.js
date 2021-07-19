@@ -93,3 +93,5 @@ export const getAllBuildsOfPipeline = async (req, res) => {
   myCache.set(key, selected);
   res.send(selected);
 };
+
+export const getPipelineSummary = async (req, res) => {};
