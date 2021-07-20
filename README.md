@@ -23,6 +23,10 @@ git clone https://github.com/Adarsh-Kumar-1804/build-project
 - Install dependencies
 ```
 npm install
+cd packages/server-api
+npm install
+cd packages/ui-dashboard
+npm install
 ```
 - Run the project
 ```
